@@ -120,6 +120,8 @@ namespace Snai.File.FileOperation.Middleware
                             {
                                 output.AppendLine(golds.UserID.ToString() + "    " + golds.Golds + "    " + golds.RecordDate);
                             }
+
+                            output.AppendLine("");
                         }
                     }
                 }
