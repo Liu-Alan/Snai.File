@@ -25,13 +25,14 @@ namespace Snai.File.FileOperation.Middleware
         public async Task Invoke(HttpContext context)
         {
             var output = new StringBuilder("");
+            //ResolveDirectory(output, "", "");
             ResolveFileInfo(output, "log", ".log");
 
             await context.Response.WriteAsync(output.ToString());
         }
 
         //读取目录下所有文件内容
-        private void ResolveFileInfo(StringBuilder output, string path, string prefix)
+        private void ResolveFileInfo(StringBuilder output, string path, string suffix)
         {
             output.AppendLine("UserID    Golds    RecordDate");
 
@@ -42,16 +43,16 @@ namespace Snai.File.FileOperation.Middleware
                 {
                     ResolveFileInfo(output,
                         item.PhysicalPath.Substring(Directory.GetCurrentDirectory().Length),
-                        prefix);
+                        suffix);
                 }
                 else
                 {
-                    if (item.Name.Contains(prefix))
+                    if (item.Name.Contains(suffix))
                     {
                         var userList = new List<UserGolds>();
                         var user = new UserGolds();
 
-                        IFileInfo file = _fileProvider.GetFileInfo(path + "\\"+ item.Name);
+                        IFileInfo file = _fileProvider.GetFileInfo(path + "\\" + item.Name);
 
                         using (var stream = file.CreateReadStream())
                         {
@@ -102,7 +103,7 @@ namespace Snai.File.FileOperation.Middleware
                                         {
                                             userList.Add(user);
                                         }
-                                        else if(userMax.RecordDate < user.RecordDate)
+                                        else if (userMax.RecordDate < user.RecordDate)
                                         {
                                             userList.Remove(userMax);
                                             userList.Add(user);
@@ -114,9 +115,9 @@ namespace Snai.File.FileOperation.Middleware
                             }
                         }
 
-                        if(userList != null && userList.Count > 0)
+                        if (userList != null && userList.Count > 0)
                         {
-                            foreach (var golds in userList.OrderBy(u=>u.RecordDate))
+                            foreach (var golds in userList.OrderBy(u => u.RecordDate))
                             {
                                 output.AppendLine(golds.UserID.ToString() + "    " + golds.Golds + "    " + golds.RecordDate);
                             }
@@ -152,7 +153,7 @@ namespace Snai.File.FileOperation.Middleware
 
     public static class UseFileProviderExtensions
     {
-        public static IApplicationBuilder UseHelloFileProvider(this IApplicationBuilder app)
+        public static IApplicationBuilder UseFileProvider(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FileProviderMiddleware>();
         }

@@ -29,7 +29,7 @@ namespace Snai.File.FileOperation
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHelloFileProvider();
+            app.UseFileProvider();
 
             app.Run(async (context) =>
             {
