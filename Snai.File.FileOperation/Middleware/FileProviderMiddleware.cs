@@ -34,6 +34,9 @@ namespace Snai.File.FileOperation.Middleware
         //读取目录下所有文件内容
         private void ResolveFileInfo(StringBuilder output, string path, string suffix)
         {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            Encoding encoding = Encoding.GetEncoding("gb2312");
+
             output.AppendLine("UserID    Golds    RecordDate");
 
             IDirectoryContents dir = _fileProvider.GetDirectoryContents(path);
@@ -56,7 +59,7 @@ namespace Snai.File.FileOperation.Middleware
 
                         using (var stream = file.CreateReadStream())
                         {
-                            using (var reader = new StreamReader(stream))
+                            using (var reader = new StreamReader(stream, encoding))
                             {
                                 string content = reader.ReadLine();
 
